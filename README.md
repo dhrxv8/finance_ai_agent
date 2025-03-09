@@ -1,4 +1,4 @@
-# Finance AI Agent Playground
+# Finance AI Agent 
 
 A powerful demonstration of intelligent financial analysis and web search capabilities built with the Phi framework and Groq models.
 

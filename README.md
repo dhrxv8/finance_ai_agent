@@ -1,29 +1,37 @@
-# Finance AI Agent 
+# Finance AI Agent
 
-A powerful demonstration of intelligent financial analysis and web search capabilities built with the Phi framework and Groq models.
+AI-powered financial analysis and web search agent built with the Phi (Agno) framework and Groq's LLaMA model.
 
 ## 🚀 Overview
 
-This project showcases two sophisticated AI agents working together to provide comprehensive financial insights:
+This project features two AI agents working together to provide comprehensive financial insights:
 
-- **Web Search Agent** - Performs real-time web searches via DuckDuckGo, delivering summarized results with source citations
-- **Finance AI Agent** - Fetches and analyzes stock data through YFinance, providing:
+- **Web Search Agent** — Performs real-time web searches via DuckDuckGo, delivering summarized results with source citations
+- **Finance AI Agent** — Fetches and analyzes stock data through YFinance, providing:
   - Real-time market data
   - Analyst recommendations
   - Key financial metrics
   - Recent company news
   - Detailed company profiles
 
-Both agents are integrated into an interactive playground application built with FastAPI.
+Both agents are integrated into an interactive playground application powered by the Phi framework and served via FastAPI.
+
+## ⚙️ How It Works
+
+1. **User query** is submitted through the Phi Playground UI
+2. The appropriate agent is invoked — Finance Agent for stock/market queries, Web Search Agent for general research
+3. The **Finance Agent** calls YFinance tools to fetch live stock data, fundamentals, and news
+4. The **Web Search Agent** queries DuckDuckGo for real-time web results with source citations
+5. Both agents generate structured Markdown responses powered by Groq's LLaMA 3.2 model
 
 ## 🛠️ Technologies
 
-- **Phi Framework** - Core infrastructure for agent development and orchestration
-- **Groq Models** - State-of-the-art language and vision processing (`llama-3.2-90b-vision-preview`)
-- **DuckDuckGo Search** - Web data retrieval with enhanced privacy
-- **YFinance API** - Comprehensive financial data access
-- **FastAPI & Uvicorn** - Modern, high-performance web application serving
-- **Python-dotenv** - Secure environment variable management
+- **Phi (Agno) Framework** — Core infrastructure for agent development and orchestration
+- **Groq LLaMA 3.2** — State-of-the-art language model (`llama-3.2-90b-vision-preview`)
+- **DuckDuckGo Search** — Privacy-respecting real-time web data retrieval
+- **YFinance API** — Comprehensive financial data access
+- **FastAPI & Uvicorn** — High-performance web application serving
+- **Python-dotenv** — Secure environment variable management
 
 ## 📋 Installation
 
@@ -54,15 +62,25 @@ pip install -r requirements.txt
 
 ### 4. Configure Environment Variables
 
-Create a `.env` file in the project root with your API credentials:
+Copy the example environment file and fill in your API credentials:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your keys:
 
 ```env
 PHI_API_KEY=your_phi_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
+
+- Get your **PHI_API_KEY** from [phidata.com](https://www.phidata.com/)
+- Get your **GROQ_API_KEY** from [console.groq.com](https://console.groq.com/)
 
 > **Security Note**: The `.env` file is excluded from Git tracking (via `.gitignore`) to protect your API keys.
 
-## 🚀 Usage
+## ▶️ Usage
 
 Launch the application with a single command:
 
@@ -77,7 +95,9 @@ The Phi Playground will start with both agents active. FastAPI (via Uvicorn) wil
 ```
 finance_ai_agent/
 ├── .env                # Environment file (not tracked by Git)
+├── .env.example        # Example environment variables template
 ├── .gitignore          # Specifies files/folders to ignore
+├── LICENSE             # MIT License
 ├── README.md           # Project documentation
 ├── requirements.txt    # Python dependencies
 └── playg.py            # Main application script
@@ -98,3 +118,4 @@ Contributions are welcome! Please feel free to:
 ## 📄 License
 
 [MIT License](LICENSE)
+

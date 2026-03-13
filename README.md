@@ -1,102 +1,119 @@
-# Text & Document Summarization (Streamlit + LangChain + OpenAI)
+# Finance AI Agent (Phi/Agno + Groq + YFinance + DuckDuckGo)
 
-A simple Streamlit web app that summarizes **plain text** or **uploaded `.txt` / `.pdf` files** using **`gpt-3.5-turbo`** via LangChain.
+AI-powered financial analysis agent built with the **Phi (Agno) framework**.  
+It combines:
+- **Market data + company info/news** via **YFinance**
+- **Web search** via **DuckDuckGo**
+- A **Groq-hosted LLaMA model** to generate structured, readable financial analysis
 
-## Demo
+> Repo description: AI-powered financial analysis agent using Groq LLaMA, YFinance, and DuckDuckGo - built with the Phi (Agno) framework
 
-> Optional but highly recommended:
-> Add screenshots/GIFs under `assets/` and link them here.
->
-> Example:
-> `![App screenshot](assets/app.png)`
+---
 
-## Features
+## What this project does
 
-- Summarize text pasted into the app
-- Upload and summarize `.txt` files
-- Upload and summarize `.pdf` files (extracts text with `pdfplumber`)
-- Minimal UI built with Streamlit
+This project provides a small “agent playground” with two agents:
 
-## Tech Stack
+1. **Finance AI Agent**
+   - Pulls: stock price, fundamentals, analyst recommendations, company info, company news
+   - Formats output cleanly (tables / sections)
+   - Adds a timestamp instruction for relevance
 
-- **UI:** Streamlit
-- **LLM Orchestration:** LangChain (`ChatOpenAI`, `PromptTemplate`, `LLMChain`)
-- **Model:** OpenAI `gpt-3.5-turbo`
-- **PDF Text Extraction:** `pdfplumber`
+2. **Web Search Agent**
+   - Uses DuckDuckGo to find up-to-date information
+   - Instructed to cross-check sources and cite links in responses
 
-## How it works (high-level)
+---
 
-1. Streamlit collects either:
-   - text from a text area, or
-   - an uploaded file (`.txt` / `.pdf`)
-2. For PDFs, text is extracted from each page via `pdfplumber`.
-3. The app sends the text to a LangChain summarization prompt:
-   - `Summarize the following text: ...`
-4. The OpenAI model returns a summary that’s displayed in the UI.
+## Tech stack
 
-## Project Structure
+- **Framework:** Phi (Agno) (`phidata`)
+- **LLM Provider:** Groq
+- **Model:** `llama-3.2-90b-vision-preview` (as configured in `playg.py`)
+- **Tools:**
+  - `YFinanceTools` (stock data, fundamentals, recommendations, news)
+  - `DuckDuckGo` (web search)
+- **App runner / UI:** Phi Playground served as a FastAPI app (via `serve_playground_app`)
+- **Runtime:** `uvicorn`
 
-- `app.py` — Streamlit UI
-- `text_summarization.py` — summarization logic + PDF extraction helpers
-- `requirements.txt` — pinned dependencies
+---
 
-## Setup (Local)
+## Project structure
 
-### Prerequisites
+- `playg.py` — defines the two agents + starts the Playground app
+- `.env.example` — environment variables template
+- `requirements.txt` — dependencies
+- `LICENSE` — MIT
 
-- Python **3.8+**
-- An OpenAI API key
+---
+
+## Setup (local)
 
 ### 1) Clone
-
 ```bash
-git clone https://github.com/dhrxv8/text-summarization-app.git
-cd text-summarization-app
+git clone https://github.com/dhrxv8/finance_ai_agent.git
+cd finance_ai_agent
 ```
 
-### 2) Install dependencies
+### 2) Create and activate a virtual environment (recommended)
+```bash
+python -m venv .venv
+# macOS/Linux
+source .venv/bin/activate
+# Windows
+.venv\Scripts\activate
+```
 
+### 3) Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3) Configure your OpenAI API key (required)
+### 4) Configure environment variables
 
-This project currently reads the key from **Streamlit secrets**:
-
-- Create a file at: `.streamlit/secrets.toml`
-- Add:
-
-```toml
-OPENAI_API_KEY = "your-api-key-here"
-```
-
-### 4) Run the app
+Copy `.env.example` to `.env` and fill in your keys:
 
 ```bash
-streamlit run app.py
+cp .env.example .env
 ```
 
-Then open the local URL Streamlit prints in your terminal.
+`.env` should include:
+- `PHI_API_KEY` (Phi/Agno platform key)
+- `GROQ_API_KEY` (Groq API key)
 
-## Usage
+> Note: `playg.py` calls `load_dotenv()`, so `.env` is loaded automatically.
 
-### Summarize Text
-1. Paste text into the text box
-2. Click **Summarize Text**
-3. The summary appears below
+### 5) Run the Playground app
+```bash
+python playg.py
+```
 
-### Summarize File
-1. Upload a `.txt` or `.pdf` file
-2. Click **Summarize File**
-3. The summary appears below
+Then open the local URL printed in your terminal (served via `uvicorn`).
 
-## Notes / Limitations
+---
 
-- **Large PDFs** may exceed model context limits and/or become slow/costly (no chunking implemented yet).
-- **Scanned PDFs** without an embedded text layer may return little/no text (OCR not implemented).
-- When summarizing PDFs, the current implementation writes the upload to `uploaded_file.pdf` locally.
+## How it works (based on the code)
+
+- The app loads env vars using `python-dotenv`
+- It creates:
+  - `web_search_agent` using `DuckDuckGo()`
+  - `finance_agent` using `YFinanceTools(...)`
+- Both agents use Groq as the model backend
+- A Phi `Playground` is created with both agents and served via:
+  ```py
+  serve_playground_app("playg:app", reload=True)
+  ```
+
+---
+
+## Notes / limitations
+
+- Financial outputs depend on data availability from Yahoo Finance and may vary by ticker/region.
+- Web results can change over time; always verify critical information.
+- This is not financial advice — intended for educational/demo use.
+
+---
 
 ## License
 
-MIT — see `LICENSE`.
+MIT (see `LICENSE`).
